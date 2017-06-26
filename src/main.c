@@ -119,6 +119,26 @@ int main(int argc, char* argv[])
 	hsd.Init.ClockDiv = 0;
 
 	HWInit();
+
+	//############################################################################
+
+	/*#include <drivers/lcd.h>
+
+	BSP_LCD_InitEx(LCD_ORIENTATION_PORTRAIT);
+	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER_BACKGROUND, LCD_FB_START_ADDRESS);
+	BSP_LCD_SetFont(&Font20);
+	BSP_LCD_Clear(0xFF2F2F2F);
+	BSP_LCD_SetBackColor(0xFF2F2F2F);
+	BSP_LCD_SetTextColor(0xFFFFFFFF);
+
+	for(int i = 0; i <= 480; i++)
+	{
+		BSP_LCD_DrawPixel(i, i, 0xFFFFFFFF);
+	}*/
+
+
+	//############################################################################
+
 	ConsoleInit(&Dbg);
 
 	ConsolePrint(&Dbg, (uint8_t *) "#########################");
@@ -160,13 +180,20 @@ int main(int argc, char* argv[])
 	}
 
 
+	ConsolePrint(&Dbg, "");
+	ConsolePrint(&Dbg, "");
+
+	uint8_t i = 0;
 
 	// Infinite loop
 	while (1)
     {
-
+		uint8_t buf[68] = {0};
+		sprintf(buf, "> Some Random Line( #%d )", i);
+		ConsolePrint(&Dbg, buf);
 		BSP_LED_Toggle(DISCO_LED4);
-		HAL_Delay(1000);
+		HAL_Delay(100);
+		i++;
     }
 }
 

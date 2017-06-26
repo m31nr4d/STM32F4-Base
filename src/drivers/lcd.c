@@ -256,12 +256,12 @@ uint8_t BSP_LCD_InitEx(LCD_OrientationTypeDef orientation)
   */
   if(orientation == LCD_ORIENTATION_PORTRAIT)
   {
-    VSA  = OTM8009A_480X800_VSYNC;        /* 12 */
-    VBP  = OTM8009A_480X800_VBP;          /* 12 */
-    VFP  = OTM8009A_480X800_VFP;          /* 12 */
-    HSA  = OTM8009A_480X800_HSYNC;        /* 120 */
-    HBP  = OTM8009A_480X800_HBP;          /* 120 */
-    HFP  = OTM8009A_480X800_HFP;          /* 120 */
+    VSA  = 12;        /* 120 */
+    VBP  = 120;     /* 120 */
+    VFP  = 12;          /* 120 */
+    HSA  = 120;        /* 12 */
+    HBP  = 12;          /* 12 */
+    HFP  = 120;        /* 12 */
     lcd_x_size = OTM8009A_480X800_WIDTH;  /* 480 */
     lcd_y_size = OTM8009A_480X800_HEIGHT; /* 800 */                                
   }

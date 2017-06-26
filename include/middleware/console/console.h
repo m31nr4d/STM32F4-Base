@@ -16,7 +16,7 @@ typedef enum{
 
 typedef struct{
 	DbgConsoleChannel channel;
-	uint8_t display_buffer[25][57];
+	uint8_t display_buffer[66][68];
 	uint8_t buffer_Index;
 }DbgConsoleTypeDef;
 
