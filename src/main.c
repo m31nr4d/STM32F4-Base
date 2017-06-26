@@ -49,60 +49,10 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
-void InitClock();
-
-int main(int argc, char* argv[])
-{
-	uint8_t linecount = 0;
-	// At this stage the system clock should have already been configured
-	// at high speed.
-	HAL_Init();
-
-	BSP_LED_Init(DISCO_LED1);
-	BSP_LED_Toggle(DISCO_LED1);
-
-	InitClock();
-
-	BSP_LED_Init(DISCO_LED2);
-	BSP_LED_Toggle(DISCO_LED2);
-
-	BSP_LCD_InitEx(LCD_ORIENTATION_LANDSCAPE);
-
-	BSP_LED_Init(DISCO_LED3);
-	BSP_LED_Toggle(DISCO_LED3);
-
-	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER_BACKGROUND, LCD_FB_START_ADDRESS);
-	BSP_LCD_SetFont(&Font20);
-	BSP_LCD_Clear(LCD_COLOR_BLACK);
-	BSP_LCD_Clear(LCD_COLOR_WHITE);
-
-	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-	BSP_LCD_DisplayStringAtLine(linecount++, (uint8_t *) ">>SYS Init OK");
-	BSP_LCD_DisplayStringAtLine(linecount++, (uint8_t *) ">>CLK Init OK");
-	BSP_LCD_DisplayStringAtLine(linecount++, (uint8_t *) ">>RAM Init OK");
-	BSP_LCD_DisplayStringAtLine(linecount++, (uint8_t *) ">>DIS Init OK");
-	BSP_LCD_DisplayStringAtLine(linecount++, (uint8_t *) ">>SYS Init OK");
-
-	uint8_t buf[10];
-	uint8_t msg[] = ">>Boot Completed after [ms]: ";
-
-	itoa(HAL_GetTick(), buf, 10);
-	strcat(msg, buf);
-
-	BSP_LCD_DisplayStringAtLine(linecount++, msg);
-
-
-	BSP_LED_Init(DISCO_LED4);
-	// Infinite loop
-	while (1)
-    {
-		BSP_LED_Toggle(DISCO_LED4);
-		HAL_Delay(100);
-    }
-}
-
-void InitClock()
+//########################
+// HW CONFIG
+//########################
+void ClockInit()
 {
 	RCC_OscInitTypeDef OscConfig;
 	HAL_RCC_GetOscConfig(&OscConfig);
@@ -134,6 +84,93 @@ void InitClock()
 	ClkCconfig.APB2CLKDivider = RCC_HCLK_DIV2;
 	HAL_RCC_ClockConfig(&ClkCconfig, FLASH_LATENCY_5);
 }
+
+void HWInit()
+{
+	HAL_Init();
+	ClockInit();
+	BSP_LED_Init(DISCO_LED4);
+	BSP_LED_Init(DISCO_LED3);
+	BSP_LED_Init(DISCO_LED2);
+	BSP_LED_Init(DISCO_LED1);
+}
+
+//########################
+// MAIN
+//########################
+
+FATFS SdFs, QspiFs;		/* FatFs work area needed for each volume */
+FIL Fil, Fil2;			/* File object needed for each open file */
+DbgConsoleTypeDef Dbg; // Console Object
+SD_HandleTypeDef hsd;
+
+
+int main(int argc, char* argv[])
+{
+
+	Dbg.channel = Display; // | Trace;
+
+	hsd.Instance = SDIO;
+	hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
+	hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+	hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
+	hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
+	hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+	hsd.Init.ClockDiv = 0;
+
+	HWInit();
+	ConsoleInit(&Dbg);
+
+	ConsolePrint(&Dbg, (uint8_t *) "#########################");
+	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####");
+	ConsolePrint(&Dbg, (uint8_t *) "#### (c) David Paul  ####");
+	ConsolePrint(&Dbg, (uint8_t *) "#### Version: 0.0.2  ####");
+	ConsolePrint(&Dbg, (uint8_t *) "#########################");
+	ConsolePrint(&Dbg, (uint8_t *) "");
+	ConsolePrint(&Dbg, (uint8_t *) __DATE__);
+	ConsolePrint(&Dbg, (uint8_t *) "");
+	ConsolePrint(&Dbg, (uint8_t *) "System Init OK");
+	ConsolePrint(&Dbg, (uint8_t *) "Clock Init OK");
+	ConsolePrint(&Dbg, (uint8_t *) "SDRAM Init OK");
+	ConsolePrint(&Dbg, (uint8_t *) "Debug Init OK");
+
+	FATFS_Init();
+
+	ConsolePrint(&Dbg, (uint8_t *) "FAT Fs Init Ok");
+
+	FRESULT res = f_mount(&SdFs, "SD:/", 1);
+	if(res == RES_OK)
+		ConsolePrint(&Dbg, (uint8_t *) "> SD Card Mounted as 'SD:/'");
+	else
+	{
+		uint8_t buf[57] = {0};
+		sprintf(buf, "> SD Card Not Mounted (Err: %d )", res);
+		ConsolePrint(&Dbg, buf);
+	}
+
+
+	res = f_mount(&QspiFs, "QSPI:/", 1);
+	if(res == RES_OK)
+		ConsolePrint(&Dbg, (uint8_t *) "> NOR Flash Mounted as 'QSPI:/'");
+	else
+	{
+		uint8_t buf[57] = {0};
+		sprintf(buf, "> NOR Flash Not Mounted (Err: %d )", res);
+		ConsolePrint(&Dbg, buf);
+	}
+
+
+
+	// Infinite loop
+	while (1)
+    {
+
+		BSP_LED_Toggle(DISCO_LED4);
+		HAL_Delay(1000);
+    }
+}
+
+
 
 #pragma GCC diagnostic pop
 
