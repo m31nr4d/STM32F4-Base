@@ -177,14 +177,24 @@ int main(int argc, char* argv[])
 		ConsolePrint(&Dbg, buf);
 	}
 
+	ConsolePrint(&Dbg, " \n");
+	ConsolePrint(&Dbg, "Running Bargraph Demo:\n");
 
-	ConsolePrint(&Dbg, "\n\nDone");
-
+	float val = 0.0;
 	// Infinite loop
 	while (1)
     {
+		if(val < 1.0)
+			ConsolePrintBargraph(&Dbg, val, 0);
+		else
+		{
+			ConsolePrintBargraph(&Dbg, val, 1);
+			ConsolePrint(&Dbg, "> Bargraph Completed!\n");
+			while(1);
+		}
 		BSP_LED_Toggle(DISCO_LED4);
 		HAL_Delay(100);
+		val += 0.028;
     }
 }
 

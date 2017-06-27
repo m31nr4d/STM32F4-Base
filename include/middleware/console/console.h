@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #define NumColumns 68
-#define NumLines 66
+#define NumLines 23
 
 
 typedef enum{
@@ -30,6 +30,7 @@ typedef struct{
 
 void ConsoleInit(DbgConsoleTypeDef *Dbg);
 void ConsolePrint(DbgConsoleTypeDef *Dbg, uint8_t *Msg);
+void ConsolePrintBargraph(DbgConsoleTypeDef *Dbg, float val, uint8_t save);
 void ConsoleShow(DbgConsoleTypeDef *Dbg);
 
 #endif /* CONSOLE_H_ */
