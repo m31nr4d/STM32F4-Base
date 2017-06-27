@@ -22,49 +22,85 @@ void ConsoleInit(DbgConsoleTypeDef *Dbg)
 
 		Dbg->buffer_Index = 0;
 
-		for(uint8_t i = 0; i < 66; i++)
+		for(uint8_t i = 0; i < NumLines; i++)
 		{
-			for(uint8_t j = 0; j < 68; j++)
+			for(uint8_t j = 0; j < NumColumns; j++)
 			{
-				Dbg->display_buffer[i][j] = 0;
+				Dbg->display_buffer[i][j].character = ' ';
 
 			}
 		}
 	}
 }
 
-// TODO
-// Get the Buffer right; somehow ConsolePrint skips an input; somehow it prints a line below the lower display border
+
 
 void ConsolePrint(DbgConsoleTypeDef *Dbg, uint8_t *Msg)
 {
-	if(Dbg->channel & Display)
+	uint8_t CurLength = 0;
+
+	while(*Msg)
 	{
-		char text[68] = {0};
-		strcpy(text, Msg);
-		if(Dbg->buffer_Index == 66)
+		if(*Msg == '\n' || *Msg == '\r' || CurLength == NumColumns)
+		{
+			if(CurLength != 0)
+			{
+				Dbg->buffer_Index++;
+				if(Dbg->buffer_Index == NumLines)
+				{
+					Dbg->buffer_Index = 0;
+				}
+				for(uint8_t i = 0; i < NumColumns; i++)
+				{
+					Dbg->display_buffer[Dbg->buffer_Index][i].character = ' ';
+				}
+			}
+		}
+		else
+		{
+			Dbg->display_buffer[Dbg->buffer_Index][CurLength].character = *Msg;
+			CurLength++;
+		}
+
+		if(Dbg->buffer_Index == NumLines)
 		{
 			Dbg->buffer_Index = 0;
 		}
-
-		strcpy(Dbg->display_buffer[Dbg->buffer_Index], (uint8_t *) text);
-		memset(text , ' ', 68 - strlen(text));
-		strcat(Dbg->display_buffer[Dbg->buffer_Index], (uint8_t *) text);
-		int8_t msg_index = Dbg->buffer_Index;
-
-		for(uint8_t i = 66; i > 0; i--)
-		{
-			BSP_LCD_DisplayStringAtLine(i-1, Dbg->display_buffer[msg_index]);
-			msg_index--;
-			if(msg_index < 0)
-				msg_index = 66;
-		}
-		Dbg->buffer_Index++;
+		Msg++;
 	}
-	if(Dbg->channel & Trace)
+
+	while(CurLength != NumColumns)
 	{
-		trace_printf(Msg);
-		trace_printf("\n");
+		Dbg->display_buffer[Dbg->buffer_Index][CurLength].character = ' ';
+		CurLength++;
 	}
 
+	ConsoleShow(Dbg);
+
+	return;
+}
+
+void ConsoleShow(DbgConsoleTypeDef *Dbg)
+{
+	int8_t line_Index = Dbg->buffer_Index;
+	for(int8_t i = NumLines; i > 0; i--)
+	{
+		for(uint8_t j = 0; j < NumColumns; j++)
+		{
+			if(i == NumLines)
+			{
+				BSP_LCD_SetBackColor(0xFF008000);
+				BSP_LCD_SetTextColor(0xFF404040);
+			}
+			else
+			{
+				BSP_LCD_SetBackColor(0xFF2F2F2F);
+				BSP_LCD_SetTextColor(0xFFFFFFFF);//Dbg->display_buffer[line_Index][j].format);
+			}
+			BSP_LCD_DisplayChar(j * 7, (i-1) * 12, Dbg->display_buffer[line_Index][j].character);
+		}
+		line_Index --;
+		if(line_Index < 0)
+			line_Index = NumLines-1;
+	}
 }

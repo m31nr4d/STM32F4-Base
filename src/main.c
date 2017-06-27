@@ -141,59 +141,50 @@ int main(int argc, char* argv[])
 
 	ConsoleInit(&Dbg);
 
-	ConsolePrint(&Dbg, (uint8_t *) "#########################");
-	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####");
-	ConsolePrint(&Dbg, (uint8_t *) "#### (c) David Paul  ####");
-	ConsolePrint(&Dbg, (uint8_t *) "#### Version: 0.0.2  ####");
-	ConsolePrint(&Dbg, (uint8_t *) "#########################");
-	ConsolePrint(&Dbg, (uint8_t *) "");
-	ConsolePrint(&Dbg, (uint8_t *) __DATE__);
-	ConsolePrint(&Dbg, (uint8_t *) "");
-	ConsolePrint(&Dbg, (uint8_t *) "System Init OK");
-	ConsolePrint(&Dbg, (uint8_t *) "Clock Init OK");
-	ConsolePrint(&Dbg, (uint8_t *) "SDRAM Init OK");
-	ConsolePrint(&Dbg, (uint8_t *) "Debug Init OK");
+	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
+	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####\n");
+	ConsolePrint(&Dbg, (uint8_t *) "#### (c) David Paul  ####\n");
+	ConsolePrint(&Dbg, (uint8_t *) "#### Version: 0.0.2  ####\n");
+	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
+	ConsolePrint(&Dbg, (uint8_t *) "\n");
+	ConsolePrint(&Dbg, (uint8_t *) "System Init OK\n");
+	ConsolePrint(&Dbg, (uint8_t *) "Clock Init OK\n");
+	ConsolePrint(&Dbg, (uint8_t *) "SDRAM Init OK\n");
+	ConsolePrint(&Dbg, (uint8_t *) "Debug Init OK\n");
 
 	FATFS_Init();
 
-	ConsolePrint(&Dbg, (uint8_t *) "FAT Fs Init Ok");
+	ConsolePrint(&Dbg, (uint8_t *) "FAT Fs Init Ok\n");
 
 	FRESULT res = f_mount(&SdFs, "SD:/", 1);
 	if(res == RES_OK)
-		ConsolePrint(&Dbg, (uint8_t *) "> SD Card Mounted as 'SD:/'");
+		ConsolePrint(&Dbg, (uint8_t *) "> SD Card Mounted as 'SD:/'\n");
 	else
 	{
 		uint8_t buf[57] = {0};
-		sprintf(buf, "> SD Card Not Mounted (Err: %d )", res);
+		sprintf(buf, "> SD Card Not Mounted (Err: %d )\n", res);
 		ConsolePrint(&Dbg, buf);
 	}
 
 
 	res = f_mount(&QspiFs, "QSPI:/", 1);
 	if(res == RES_OK)
-		ConsolePrint(&Dbg, (uint8_t *) "> NOR Flash Mounted as 'QSPI:/'");
+		ConsolePrint(&Dbg, (uint8_t *) "> NOR Flash Mounted as 'QSPI:/'\n");
 	else
 	{
 		uint8_t buf[57] = {0};
-		sprintf(buf, "> NOR Flash Not Mounted (Err: %d )", res);
+		sprintf(buf, "> NOR Flash Not Mounted (Err: %d )\n", res);
 		ConsolePrint(&Dbg, buf);
 	}
 
 
-	ConsolePrint(&Dbg, "");
-	ConsolePrint(&Dbg, "");
-
-	uint8_t i = 0;
+	ConsolePrint(&Dbg, "\n\nDone");
 
 	// Infinite loop
 	while (1)
     {
-		uint8_t buf[68] = {0};
-		sprintf(buf, "> Some Random Line( #%d )", i);
-		ConsolePrint(&Dbg, buf);
 		BSP_LED_Toggle(DISCO_LED4);
 		HAL_Delay(100);
-		i++;
     }
 }
 
