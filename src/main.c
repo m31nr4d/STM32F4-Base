@@ -93,6 +93,13 @@ void HWInit()
 	BSP_LED_Init(DISCO_LED3);
 	BSP_LED_Init(DISCO_LED2);
 	BSP_LED_Init(DISCO_LED1);
+
+	BSP_LCD_InitEx(LCD_ORIENTATION_PORTRAIT);
+	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER_BACKGROUND, LCD_FB_START_ADDRESS);
+	BSP_LCD_SetFont(&Font12);
+	BSP_LCD_Clear(0xFF2F2F2F);
+
+
 }
 
 //########################
@@ -108,8 +115,6 @@ SD_HandleTypeDef hsd;
 int main(int argc, char* argv[])
 {
 
-	Dbg.channel = Display; // | Trace;
-
 	hsd.Instance = SDIO;
 	hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
 	hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
@@ -118,35 +123,19 @@ int main(int argc, char* argv[])
 	hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
 	hsd.Init.ClockDiv = 0;
 
+	Dbg.channel = Display; // | Trace;
+
 	HWInit();
 
-	//############################################################################
-
-	/*#include <drivers/lcd.h>
-
-	BSP_LCD_InitEx(LCD_ORIENTATION_PORTRAIT);
-	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER_BACKGROUND, LCD_FB_START_ADDRESS);
-	BSP_LCD_SetFont(&Font20);
-	BSP_LCD_Clear(0xFF2F2F2F);
-	BSP_LCD_SetBackColor(0xFF2F2F2F);
-	BSP_LCD_SetTextColor(0xFFFFFFFF);
-
-	for(int i = 0; i <= 480; i++)
-	{
-		BSP_LCD_DrawPixel(i, i, 0xFFFFFFFF);
-	}*/
-
-
-	//############################################################################
-
 	ConsoleInit(&Dbg);
+	StatusbarShow();
 
 	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
 	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####\n");
 	ConsolePrint(&Dbg, (uint8_t *) "#### (c) David Paul  ####\n");
 	ConsolePrint(&Dbg, (uint8_t *) "#### Version: 0.0.2  ####\n");
 	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
-	ConsolePrint(&Dbg, (uint8_t *) "\n");
+	ConsolePrint(&Dbg, (uint8_t *) " \n");
 	ConsolePrint(&Dbg, (uint8_t *) "System Init OK\n");
 	ConsolePrint(&Dbg, (uint8_t *) "Clock Init OK\n");
 	ConsolePrint(&Dbg, (uint8_t *) "SDRAM Init OK\n");
@@ -156,9 +145,13 @@ int main(int argc, char* argv[])
 
 	ConsolePrint(&Dbg, (uint8_t *) "FAT Fs Init Ok\n");
 
+	BSP_LED_Toggle(DISCO_LED1);
 	FRESULT res = f_mount(&SdFs, "SD:/", 1);
 	if(res == RES_OK)
+	{
 		ConsolePrint(&Dbg, (uint8_t *) "> SD Card Mounted as 'SD:/'\n");
+		BSP_LED_Toggle(DISCO_LED1);
+	}
 	else
 	{
 		uint8_t buf[57] = {0};
@@ -167,9 +160,13 @@ int main(int argc, char* argv[])
 	}
 
 
+	BSP_LED_Toggle(DISCO_LED2);
 	res = f_mount(&QspiFs, "QSPI:/", 1);
 	if(res == RES_OK)
+	{
 		ConsolePrint(&Dbg, (uint8_t *) "> NOR Flash Mounted as 'QSPI:/'\n");
+		BSP_LED_Toggle(DISCO_LED2);
+	}
 	else
 	{
 		uint8_t buf[57] = {0};
@@ -194,7 +191,7 @@ int main(int argc, char* argv[])
 		}
 		BSP_LED_Toggle(DISCO_LED4);
 		HAL_Delay(100);
-		val += 0.028;
+		val += 0.01;
     }
 }
 

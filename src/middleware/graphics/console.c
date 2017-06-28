@@ -6,19 +6,16 @@
  */
 
 #include <drivers/lcd.h>
-#include <middleware/console/console.h>
+#include <middleware/graphics/console.h>
 
 
 void ConsoleInit(DbgConsoleTypeDef *Dbg)
 {
 	if(Dbg->channel & Display)
 	{
-		BSP_LCD_InitEx(LCD_ORIENTATION_PORTRAIT);
-		BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER_BACKGROUND, LCD_FB_START_ADDRESS);
-		BSP_LCD_SetFont(&Font12);
-		BSP_LCD_Clear(0xFF2F2F2F);
-		BSP_LCD_SetBackColor(0xFF2F2F2F);
-		BSP_LCD_SetTextColor(0xFFFFFFFF);
+		//BSP_LCD_Clear(0xFF2F2F2F);
+		//BSP_LCD_SetBackColor(0xFF2F2F2F);
+		//BSP_LCD_SetTextColor(0xFFFFFFFF);
 
 		Dbg->buffer_Index = 0;
 
@@ -117,6 +114,9 @@ void ConsolePrint(DbgConsoleTypeDef *Dbg, uint8_t *Msg)
 
 void ConsoleShow(DbgConsoleTypeDef *Dbg)
 {
+	BSP_LCD_SetFont(&Font12);
+	BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER_BACKGROUND);
+
 	int8_t line_Index = Dbg->buffer_Index;
 	for(int8_t i = NumLines; i > 0; i--)
 	{
@@ -124,7 +124,7 @@ void ConsoleShow(DbgConsoleTypeDef *Dbg)
 		{
 			if(i == NumLines)
 			{
-				BSP_LCD_SetBackColor(0xFF00DF00);
+				BSP_LCD_SetBackColor(0xFF00C000);
 				BSP_LCD_SetTextColor(0xFF000000);
 			}
 			else

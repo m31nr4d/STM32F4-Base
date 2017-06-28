@@ -13,13 +13,13 @@
 #include "diag/Trace.h"
 
 #include <drivers/bsp.h>
-// #include "drivers/lcd.h" by Console Module
-// #include "drivers/sd.h" by FAT-Filesystem
-// #include "drivers/qspi.h" by FAT_Filesystem
+#include "drivers/lcd.h" // also used by Console Module
+// #include "drivers/sd.h" used by FAT-Filesystem
+// #include "drivers/qspi.h" used by FAT_Filesystem
 
-//#include <middleware/fat/ff.h>
 #include <middleware/fat/fatfs.h>
-#include <middleware/console/console.h>
+#include <middleware/graphics/console.h>
+#include <middleware/graphics/statusbar.h>
 
 #include <main.h>
 

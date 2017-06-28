@@ -13,6 +13,7 @@ C_SRCS += \
 ../src/drivers/font20.c \
 ../src/drivers/font24.c \
 ../src/drivers/font8.c \
+../src/drivers/fontSpecialChars.c \
 ../src/drivers/ft6x06.c \
 ../src/drivers/lcd.c \
 ../src/drivers/otm8009a.c \
@@ -34,6 +35,7 @@ OBJS += \
 ./src/drivers/font20.o \
 ./src/drivers/font24.o \
 ./src/drivers/font8.o \
+./src/drivers/fontSpecialChars.o \
 ./src/drivers/ft6x06.o \
 ./src/drivers/lcd.o \
 ./src/drivers/otm8009a.o \
@@ -55,6 +57,7 @@ C_DEPS += \
 ./src/drivers/font20.d \
 ./src/drivers/font24.d \
 ./src/drivers/font8.d \
+./src/drivers/fontSpecialChars.d \
 ./src/drivers/ft6x06.d \
 ./src/drivers/lcd.d \
 ./src/drivers/otm8009a.d \

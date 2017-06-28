@@ -29,8 +29,8 @@ CPP_DEPS :=
 SUBDIRS := \
 src/drivers \
 src \
-src/middleware/console \
 src/middleware/fat \
+src/middleware/graphics \
 system/src/cmsis \
 system/src/cortexm \
 system/src/diag \
