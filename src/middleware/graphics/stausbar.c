@@ -19,7 +19,8 @@ void StatusbarShow(StatusBarTypeDef *StB)//StatusBarTypeDef *StBar)
 
 void StatusbarSetTitle(StatusBarTypeDef *StB, uint8_t *Title)
 {
-	memset(StB->title, ' ', 60);
 	strcpy(StB->title, Title);
+	for(uint8_t i = strlen(Title); i < 60; i++)
+		strcat(StB->title, " ");
 	StatusbarShow(StB);
 }

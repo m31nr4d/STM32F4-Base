@@ -16,6 +16,7 @@
 #include "drivers/lcd.h" // also used by Console Module
 // #include "drivers/sd.h" used by FAT-Filesystem
 // #include "drivers/qspi.h" used by FAT_Filesystem
+#include "drivers/ts.h"
 
 #include <middleware/fat/fatfs.h>
 #include <middleware/graphics/console.h>

@@ -111,6 +111,7 @@ FIL Fil, Fil2;			/* File object needed for each open file */
 DbgConsoleTypeDef Dbg; // Console Object
 StatusBarTypeDef Stb;
 SD_HandleTypeDef hsd;
+TS_StateTypeDef sts;
 
 
 int main(int argc, char* argv[])
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
 	HWInit();
 
 	ConsoleInit(&Dbg);
-	StatusbarSetTitle(&Stb, (uint8_t *) "Statusbar Working!");
+	StatusbarSetTitle(&Stb, (uint8_t *) "Welcome!");
 
 	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
 	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####\n");
@@ -142,6 +143,15 @@ int main(int argc, char* argv[])
 	ConsolePrint(&Dbg, (uint8_t *) "Clock Init OK\n");
 	ConsolePrint(&Dbg, (uint8_t *) "SDRAM Init OK\n");
 	ConsolePrint(&Dbg, (uint8_t *) "Debug Init OK\n");
+
+	if(BSP_TS_Init(480,800)  == TS_OK)
+	{
+		ConsolePrint(&Dbg, "Touch Init OK\n");
+	}
+	else
+	{
+		ConsolePrint(&Dbg, "Touch Init FAIL\n");
+	}
 
 	FATFS_Init();
 
@@ -172,28 +182,52 @@ int main(int argc, char* argv[])
 	else
 	{
 		uint8_t buf[57] = {0};
-		sprintf(buf, "> NOR Flash Not Mounted (Err: %d )\n", res);
+		sprintf(buf,(uint8_t *) "> NOR Flash Not Mounted (Err: %d )\n", res);
 		ConsolePrint(&Dbg, buf);
 	}
 
-	ConsolePrint(&Dbg, " \n");
-	ConsolePrint(&Dbg, "Running Bargraph Demo:\n");
 
-	float val = 0.0;
-	// Infinite loop
+	ConsolePrint(&Dbg, (uint8_t *) " \n");
+	ConsolePrint(&Dbg, (uint8_t *) "Touchsreen Demo:\n");
+
 	while (1)
     {
-		if(val < 1.0)
-			ConsolePrintBargraph(&Dbg, val, 0);
+		//BSP_LED_Toggle(DISCO_LED4);
+		HAL_Delay(5);
+		BSP_TS_GetState(&sts);
+		if(sts.touchDetected > 0)
+		{
+			BSP_LED_On(DISCO_LED3);
+			uint8_t buf[60] = {0};
+			sprintf(buf, "Touch Detected! [%d|%d]", sts.touchX[0], sts.touchY[0]);
+			StatusbarSetTitle(&Stb, buf);
+			if((sts.touchY[0] < 500) && (sts.touchY[0] > 20))
+			{
+				uint8_t xTile = (sts.touchX[0]/(480/6));
+				uint8_t yTile = ((sts.touchY[0]-21)/(480/6));
+				BSP_LCD_SetTextColor(0xFF00FF00);
+				BSP_LCD_FillRect(xTile*(480/6),yTile*(480/6) + 21,(480/6),(480/6));
+				uint8_t buf[57] = {0};
+				sprintf(buf, "> Tile #(%d|%d) pressed!\n", xTile,yTile);
+				ConsolePrint(&Dbg, buf);
+			}
+		}
 		else
 		{
-			ConsolePrintBargraph(&Dbg, val, 1);
-			ConsolePrint(&Dbg, "> Bargraph Completed!\n");
-			while(1);
+			BSP_LED_Off(DISCO_LED3);
+			StatusbarSetTitle(&Stb, (uint8_t *) "Touch the Display!");
+			BSP_LCD_SetTextColor(0xFFFF0000);
+			BSP_LCD_FillRect(0,21,479,479);
 		}
-		BSP_LED_Toggle(DISCO_LED4);
-		HAL_Delay(100);
-		val += 0.01;
+
+		BSP_LCD_SetTextColor(0xFF000000);
+		for(uint8_t i = 0; i < 6 ; i++)
+		{
+			for(uint8_t j = 0; j < 6 ; j++)
+			{
+				BSP_LCD_DrawRect(i*(480/6),j*(480/6) + 21,(479/6),(479/6));
+			}
+		}
     }
 }
 

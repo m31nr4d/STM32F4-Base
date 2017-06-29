@@ -141,6 +141,6 @@ void ConsoleShow(DbgConsoleTypeDef *Dbg)
 
 	BSP_LCD_SetTextColor(0xFFFFFFFF);
 	BSP_LCD_DisplayStringAt(10, 506, "Debug Console:", LEFT_MODE);
-	BSP_LCD_DrawRect(0,500,479,22);
-	BSP_LCD_DrawRect(0,500,479,299);
+	BSP_LCD_DrawRect(0,501,479,22);
+	BSP_LCD_DrawRect(0,501,479,299);
 }
