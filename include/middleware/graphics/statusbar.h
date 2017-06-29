@@ -9,9 +9,10 @@
 #define STATUSBAR_H_
 
 typedef struct{
-	uint8_t val;
+	uint8_t title[60];
 }StatusBarTypeDef;
 
-void StatusbarShow(void);//StatusBarTypeDef *StBar);
+void StatusbarShow(StatusBarTypeDef *StB);//StatusBarTypeDef *StBar);
+void StatusbarSetTitle(StatusBarTypeDef *StB, uint8_t *Title);
 
 #endif /* STATUSBAR_H_ */

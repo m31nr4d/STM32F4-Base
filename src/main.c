@@ -109,6 +109,7 @@ void HWInit()
 FATFS SdFs, QspiFs;		/* FatFs work area needed for each volume */
 FIL Fil, Fil2;			/* File object needed for each open file */
 DbgConsoleTypeDef Dbg; // Console Object
+StatusBarTypeDef Stb;
 SD_HandleTypeDef hsd;
 
 
@@ -125,10 +126,11 @@ int main(int argc, char* argv[])
 
 	Dbg.channel = Display; // | Trace;
 
+
 	HWInit();
 
 	ConsoleInit(&Dbg);
-	StatusbarShow();
+	StatusbarSetTitle(&Stb, (uint8_t *) "Statusbar Working!");
 
 	ConsolePrint(&Dbg, (uint8_t *) "#########################\n");
 	ConsolePrint(&Dbg, (uint8_t *) "####  W E L C O M E  ####\n");
