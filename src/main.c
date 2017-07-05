@@ -190,12 +190,90 @@ int main(int argc, char* argv[])
 	ConsolePrint(&Dbg, (uint8_t *) " \n");
 	ConsolePrint(&Dbg, (uint8_t *) "Touchsreen Demo:\n");
 
+	BSP_LCD_SetTextColor(0xFFFFFFFF);
+	BSP_LCD_SetFont(&Font24);
+
+	uint16_t cornersx[34] = {0};
+	uint16_t sizex[34] = {0};
+	uint16_t cornersy[34] = {0};
+	uint16_t sizey[34] = {0};
+	uint8_t keymap[3][34] = {{'Q','W','E','R','T','Z','U','I','O','P','Ü','A','S','D','F','G','H','J','K','L','Ö','Ä','Y','X','C','V','B','N','M','^','<','1','~'},
+			{'q','w','e','r','t','z','u','i','o','p','ü','a','s','d','f','g','h','j','k','l','ö','ä','y','x','c','v','b','n','m','^','<','1','~'},
+			{'1','2','3','4','5','6','7','8','9','0','+','_','<','=','>','#','{','[',']','}','*','-',':',';','%','$','&','~','.','^','<','1','~'}};
+
+	for(uint8_t i = 0; i < 11 ; i++)
+	{
+			//BSP_LCD_DrawRect(i*39 + 6, 21,35, 50); // First Row Of Chars
+			//BSP_LCD_DrawRect(i*39 + 6, 81,35, 50); // Second Row
+
+		// First Row Chars
+		cornersx[i] = i*43 + 3;
+		cornersy[i] = 21;
+		sizex[i] = 37;
+		sizey[i] = 50;
+		// 2nd Row Chars
+		cornersx[i+11] = i*43 + 3;
+		cornersy[i+11] = 81;
+		sizex[i+11] = 37;
+		sizey[i+11] = 50;
+		// 3rd Row Chars
+		if( i < 8)
+		{
+			cornersx[i+21] = (i+1)*43 + 3;
+			cornersy[i+21] = 141;
+			sizex[i+21] = 37;
+			sizey[i+21] = 50;
+		}
+	}
+
+	// Shift
+	cornersx[29] = 3;
+	cornersy[29] = 141;
+	sizex[29] = 80;
+	sizey[29] = 50;
+	// Backspace
+	cornersx[30] = 9*43 + 3;
+	cornersy[30] = 141;
+	sizex[30] = 80;
+	sizey[30] = 50;
+	// Numbers
+	cornersx[31] = 3;
+	cornersy[31] = 201;
+	sizex[31] = 80;
+	sizey[31] = 50;
+	// Space
+	cornersx[32] = 2*43 + 3;
+	cornersy[32] = 201;
+	sizex[32] = 7 * 43 - 5;
+	sizey[32] = 50;
+	// Enter
+	cornersx[33] = 9*43 + 3;
+	cornersy[33] = 201;
+	sizex[33] = 80;
+	sizey[33] = 50;
+
+	for(uint8_t i = 0; i < 34; i++)
+	{
+		BSP_LCD_DrawRect(cornersx[i], cornersy[i], sizex[i], sizey[i]);
+		BSP_LCD_DisplayChar(cornersx[i]+2, cornersy[i]+2, keymap[2][i]);
+	}
+
+	/*for(uint8_t i = 2; i < 10 ; i++)
+	{
+		BSP_LCD_DrawRect(i*39 + 6, 141 ,35, 50); // Third Row
+	}*/
+
+
+	/*BSP_LCD_DrawRect(6, 201 , 72, 50);	// Nbrs (3|0-1)
+	BSP_LCD_DrawRect(2*39 + 6, 201 ,8 * 39 - 6, 50); // Space (3|2-9)
+	BSP_LCD_DrawRect(10*39 + 6, 201 ,72, 50); // Enter (3|10-11)*/
+
 	while (1)
     {
 		//BSP_LED_Toggle(DISCO_LED4);
-		HAL_Delay(5);
-		BSP_TS_GetState(&sts);
-		if(sts.touchDetected > 0)
+		//HAL_Delay(5);
+		//BSP_TS_GetState(&sts);
+		/*if(sts.touchDetected > 0)
 		{
 			BSP_LED_On(DISCO_LED3);
 			uint8_t buf[60] = {0};
@@ -227,7 +305,7 @@ int main(int argc, char* argv[])
 			{
 				BSP_LCD_DrawRect(i*(480/6),j*(480/6) + 21,(479/6),(479/6));
 			}
-		}
+		}*/
     }
 }
 
