@@ -1114,6 +1114,32 @@ void BSP_LCD_FillRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Hei
   LL_FillBuffer(ActiveLayer, (uint32_t *)Xaddress, Width, Height, (BSP_LCD_GetXSize() - Width), DrawProp[ActiveLayer].TextColor);
 }
 
+
+/**
+  * @brief  Draws a dotted rectangle in currently active layer.
+  * @param  Xpos: X position
+  * @param  Ypos: Y position
+  * @param  Width: Rectangle width
+  * @param  Height: Rectangle height
+  */
+void BSP_LCD_FillRectPattern(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height)
+{
+    /* Set the text color */
+  BSP_LCD_SetTextColor(DrawProp[ActiveLayer].TextColor);
+  BSP_LCD_DrawRect(Xpos, Ypos, Width, Height);
+  for(uint16_t i = 1; i < Height; i+=2)
+  {
+	  for(uint16_t j = 1; j < Width; j+= 2)
+	  {
+		  BSP_LCD_DrawPixel(Xpos + j, Ypos + i, BSP_LCD_GetTextColor());
+	  }
+	  for(uint16_t j = 0; j < Width; j+= 2)
+	  {
+	  	  BSP_LCD_DrawPixel(Xpos + j, Ypos + i + 1, BSP_LCD_GetTextColor());
+	  }
+  }
+}
+
 /**
   * @brief  Draws a full circle in currently active layer.
   * @param  Xpos: X position

@@ -27,8 +27,8 @@ CPP_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-src/drivers \
 src \
+src/drivers \
 src/middleware/fat \
 src/middleware/graphics \
 system/src/cmsis \

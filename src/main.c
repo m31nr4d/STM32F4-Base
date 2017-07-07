@@ -28,6 +28,7 @@
 // ----------------------------------------------------------------------------
 
 #include "global.h"
+#include "bitmap_db.h"
 
 // ----------------------------------------------------------------------------
 //
@@ -188,12 +189,15 @@ int main(int argc, char* argv[])
 
 
 	ConsolePrint(&Dbg, (uint8_t *) " \n");
-	ConsolePrint(&Dbg, (uint8_t *) "Touchsreen Demo:\n");
+	ConsolePrint(&Dbg, (uint8_t *) "Graphics Demo:\n");
 
 	BSP_LCD_SetTextColor(0xFFFFFFFF);
 	BSP_LCD_SetFont(&Font24);
 
-	uint16_t cornersx[34] = {0};
+
+	//++++++++++++++++++++++++++++++++++++++ Keyboard +++++++++++++++++++++++++++++++++++
+
+	/*uint16_t cornersx[34] = {0};
 	uint16_t sizex[34] = {0};
 	uint16_t cornersy[34] = {0};
 	uint16_t sizey[34] = {0};
@@ -256,57 +260,148 @@ int main(int argc, char* argv[])
 	{
 		BSP_LCD_DrawRect(cornersx[i], cornersy[i], sizex[i], sizey[i]);
 		BSP_LCD_DisplayChar(cornersx[i]+2, cornersy[i]+2, keymap[2][i]);
-	}
-
-	/*for(uint8_t i = 2; i < 10 ; i++)
-	{
-		BSP_LCD_DrawRect(i*39 + 6, 141 ,35, 50); // Third Row
 	}*/
 
+//++++++++++++++++++++++++++++++++++++++++++++++ New Fonts ++++++++++++++++++++++++++++++
 
-	/*BSP_LCD_DrawRect(6, 201 , 72, 50);	// Nbrs (3|0-1)
-	BSP_LCD_DrawRect(2*39 + 6, 201 ,8 * 39 - 6, 50); // Space (3|2-9)
-	BSP_LCD_DrawRect(10*39 + 6, 201 ,72, 50); // Enter (3|10-11)*/
+	/*FONT_INFO* pFont = &arial_10ptFontInfo;
+	DrawNewChar(10,100,pFont);
+	pFont = &arial_10BptFontInfo;
+	DrawNewChar(10,120,pFont);
+	pFont = &arial_18ptFontInfo;
+	DrawNewChar(10,140,pFont);
+	pFont = &arial_18BptFontInfo;
+	DrawNewChar(10,160,pFont);
+	pFont = &arial_24ptFontInfo;
+	DrawNewChar(10,200,pFont);
+	pFont = &arial_24BptFontInfo;
+	DrawNewChar(10,250,pFont);*/
+
+//+++++++++++++++++++++++++++++++++++++++++++ Bargraph ++++++++++++++++++++++++++++++++++++++++
+
+	uint8_t numBars = 9;
+	uint8_t val[9] = {24,234,100,45,179,255,90,105,234};
+
+	typedef struct{
+		uint32_t color;
+		uint8_t pattern;
+	}style;
+
+	uint32_t colors[] = {
+			LCD_COLOR_BLUE,
+			LCD_COLOR_GREEN,
+			LCD_COLOR_RED,
+			LCD_COLOR_CYAN,
+			LCD_COLOR_MAGENTA,
+			LCD_COLOR_YELLOW,
+			LCD_COLOR_ORANGE,
+			LCD_COLOR_LIGHTBLUE,
+			LCD_COLOR_LIGHTGREEN,
+			LCD_COLOR_LIGHTRED,
+			LCD_COLOR_LIGHTCYAN,
+			LCD_COLOR_LIGHTMAGENTA,
+			LCD_COLOR_LIGHTYELLOW,
+			LCD_COLOR_DARKBLUE,
+			LCD_COLOR_DARKGREEN,
+			LCD_COLOR_DARKRED,
+			LCD_COLOR_DARKCYAN,
+			LCD_COLOR_DARKMAGENTA,
+			LCD_COLOR_DARKYELLOW
+	};
+
+	Point origin = {40,40};
+	Point size = {400,300};
+
+	uint8_t barsize = (size.X - 20) / (numBars + 1);
+	uint8_t gapsize = barsize / numBars;
+
+
+
+	BSP_LCD_DrawLine(origin.X, origin.Y, origin.X, origin.Y + size.Y);
+	BSP_LCD_DrawLine(origin.X, origin.Y + size.Y,  origin.X + size.X,  origin.Y + size.Y);
+
+	for(uint8_t i = 0; i < numBars; i++)
+	{
+		BSP_LCD_SetTextColor(colors[i]);
+		BSP_LCD_FillRectPattern(origin.X + i*barsize + (i+1)*gapsize, origin.Y + size.Y- size.Y * ((float)val[i]/255.0) - 1, barsize, size.Y * ((float)val[i]/255.0));
+	}
 
 	while (1)
     {
-		//BSP_LED_Toggle(DISCO_LED4);
-		//HAL_Delay(5);
-		//BSP_TS_GetState(&sts);
-		/*if(sts.touchDetected > 0)
-		{
-			BSP_LED_On(DISCO_LED3);
-			uint8_t buf[60] = {0};
-			sprintf(buf, "Touch Detected! [%d|%d]", sts.touchX[0], sts.touchY[0]);
-			StatusbarSetTitle(&Stb, buf);
-			if((sts.touchY[0] < 500) && (sts.touchY[0] > 20))
-			{
-				uint8_t xTile = (sts.touchX[0]/(480/6));
-				uint8_t yTile = ((sts.touchY[0]-21)/(480/6));
-				BSP_LCD_SetTextColor(0xFF00FF00);
-				BSP_LCD_FillRect(xTile*(480/6),yTile*(480/6) + 21,(480/6),(480/6));
-				uint8_t buf[57] = {0};
-				sprintf(buf, "> Tile #(%d|%d) pressed!\n", xTile,yTile);
-				ConsolePrint(&Dbg, buf);
-			}
-		}
-		else
-		{
-			BSP_LED_Off(DISCO_LED3);
-			StatusbarSetTitle(&Stb, (uint8_t *) "Touch the Display!");
-			BSP_LCD_SetTextColor(0xFFFF0000);
-			BSP_LCD_FillRect(0,21,479,479);
-		}
 
-		BSP_LCD_SetTextColor(0xFF000000);
-		for(uint8_t i = 0; i < 6 ; i++)
-		{
-			for(uint8_t j = 0; j < 6 ; j++)
-			{
-				BSP_LCD_DrawRect(i*(480/6),j*(480/6) + 21,(479/6),(479/6));
-			}
-		}*/
     }
+}
+
+void DrawNewChar(uint16_t Xpos, uint16_t Ypos, FONT_INFO* pFont)
+{
+  uint32_t i = 0, j = 0;
+  uint64_t line;
+  uint8_t* pchar;
+
+
+
+uint8_t* pch = &(pFont->data[pFont->charInfo['A' - pFont->startChar].offset]);
+uint8_t width = pFont->charInfo['A' - pFont->startChar].widthBits;
+uint8_t height = pFont->charInfo['A' - pFont->startChar].heightBits;
+uint8_t offset =  8 *((width + 7)/8) -  width ;
+
+  for(i = 0; i < height; i++)
+  {
+    pchar = ((uint8_t*)pch + (width + 7)/8 * i);
+
+    switch(((width + 7)/8))
+    {
+
+    case 1:
+      line =  pchar[0];
+      break;
+
+    case 2:
+      line =  (pchar[0]<< 8) | pchar[1];
+      break;
+
+    case 3:
+      line =  (pchar[0]<< 16) | (pchar[1]<< 8) | pchar[2];
+      break;
+
+    case 4:
+      line =  (pchar[0]<< 24) | (pchar[1]<< 16) | (pchar[2]<< 8) | pchar[3];
+      break;
+
+    case 5:
+      line =  (pchar[0]<< 32) | (pchar[1]<< 24) | (pchar[2]<< 16) | (pchar[3]<< 8) | pchar[4];
+      break;
+
+    case 6:
+      line =  (pchar[0]<< 40) | (pchar[1]<< 32) | (pchar[2]<< 24) | (pchar[3]<< 16) | (pchar[4]<< 8) | pchar[5];
+      break;
+
+    case 7:
+      line =  (pchar[0]<< 48) | (pchar[1]<< 40) |(pchar[2]<< 32) | (pchar[3]<< 24) | (pchar[4]<< 16) | (pchar[5]<< 8) | pchar[6];
+      break;
+
+    case 8:
+      line =  (pchar[0]<< 56) | (pchar[1]<< 48) |(pchar[2]<< 40) |(pchar[3]<< 32) | (pchar[4]<< 24) | (pchar[5]<< 16) | (pchar[6]<< 8) | pchar[7];
+      break;
+
+    default:
+      line = 0b1010101010101010101010101010101010101010101010101010101010101010;
+      break;
+    }
+
+    for (j = 0; j < width; j++)
+    {
+      if(line & (1 << (width- j + offset- 1)))
+      {
+        BSP_LCD_DrawPixel((Xpos + j), Ypos, 0xFFFFFFFF);
+      }
+      else
+      {
+        BSP_LCD_DrawPixel((Xpos + j), Ypos,0xFF000000);
+      }
+    }
+    Ypos++;
+  }
 }
 
 

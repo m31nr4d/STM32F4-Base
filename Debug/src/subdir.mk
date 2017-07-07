@@ -4,12 +4,30 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../src/arial10.c \
+../src/arial10b.c \
+../src/arial18.c \
+../src/arial18b.c \
+../src/arial24.c \
+../src/arial24b.c \
 ../src/main.c 
 
 OBJS += \
+./src/arial10.o \
+./src/arial10b.o \
+./src/arial18.o \
+./src/arial18b.o \
+./src/arial24.o \
+./src/arial24b.o \
 ./src/main.o 
 
 C_DEPS += \
+./src/arial10.d \
+./src/arial10b.d \
+./src/arial18.d \
+./src/arial18b.d \
+./src/arial24.d \
+./src/arial24b.d \
 ./src/main.d 
 
 
